@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Octave Piano with Enharmonic Equivalence and Note Highlighting</title>
+    <title>One Octave Piano with Enharmonic Equivalence, Note Highlighting, and Playback</title>
     <style>
         body {
             display: flex;
@@ -66,16 +66,36 @@
         }
         .controls {
             margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
 <body>
     <div class="controls">
-        <label for="songSelector">Select a song:</label>
-        <select id="songSelector">
-            <option value="happyBirthday">Happy Birthday to You</option>
-        </select>
-        <button id="startSong">Start</button>
+        <div class="control-group">
+            <label for="songSelector">曲を選ぶ:</label>
+            <select id="songSelector">
+                <option value="happyBirthday">Happy Birthday to You</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label>演奏する:</label>
+            <button id="startHighlight">演奏を始める</button>
+        </div>
+        <div class="control-group">
+            <label>再生する:</label>
+            <div>
+                <button id="playButton">再生</button>
+                <button id="pauseButton">一時停止</button>
+                <button id="stopButton">停止</button>
+            </div>
+        </div>
     </div>
     <div class="piano">
         <div class="key" data-note="C">
@@ -140,20 +160,22 @@
     <script>
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-        function playNote(frequency) {
+        function playNote(frequency, duration = 0.5) {
             const oscillator = audioContext.createOscillator();
             oscillator.type = 'sine';
             oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
 
             const gainNode = audioContext.createGain();
             gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
 
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
             oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.5);
+            oscillator.stop(audioContext.currentTime + duration);
+
+            return new Promise(resolve => setTimeout(resolve, duration * 1000));
         }
 
         const noteFrequencies = {
@@ -216,37 +238,39 @@
         });
 
         const happyBirthday = [
-            { note: 'C', duration: 1 },
-            { note: 'C', duration: 1 },
-            { note: 'D', duration: 1 },
-            { note: 'C', duration: 1 },
-            { note: 'F', duration: 1 },
-            { note: 'E', duration: 1 },
-            { note: 'C', duration: 1 },
-            { note: 'C', duration: 1 },
-            { note: 'D', duration: 1 },
-            { note: 'C', duration: 1 },
-            { note: 'G', duration: 1 },
-            { note: 'F', duration: 1 },
-            { note: 'C', duration: 1 },
-            { note: 'C', duration: 1 },
-            { note: 'C2', duration: 1 },
-            { note: 'A', duration: 1 },
-            { note: 'F', duration: 1 },
-            { note: 'E', duration: 1 },
-            { note: 'D', duration: 1 },
-            { note: 'Bb', duration: 1 },
-            { note: 'Bb', duration: 1 },
-            { note: 'A', duration: 1 },
-            { note: 'F', duration: 1 },
-            { note: 'G', duration: 1 },
-            { note: 'F', duration: 1 }
+            { note: 'C', duration: 0.6 },
+            { note: 'C', duration: 0.2 },
+            { note: 'D', duration: 0.8 },
+            { note: 'C', duration: 0.8 },
+            { note: 'F', duration: 0.8 },
+            { note: 'E', duration: 1.6 },
+            { note: 'C', duration: 0.6 },
+            { note: 'C', duration: 0.2 },
+            { note: 'D', duration: 0.8 },
+            { note: 'C', duration: 0.8 },
+            { note: 'G', duration: 0.8 },
+            { note: 'F', duration: 1.6 },
+            { note: 'C', duration: 0.6 },
+            { note: 'C', duration: 0.2 },
+            { note: 'C2', duration: 0.8 },
+            { note: 'A', duration: 0.8 },
+            { note: 'F', duration: 0.8 },
+            { note: 'E', duration: 0.8 },
+            { note: 'D', duration: 1.6 },
+            { note: 'Bb', duration: 0.6 },
+            { note: 'Bb', duration: 0.2 },
+            { note: 'A', duration: 0.8 },
+            { note: 'F', duration: 0.8 },
+            { note: 'G', duration: 0.8 },
+            { note: 'F', duration: 1.6 }
         ];
 
         let currentSongNotes = [];
         let currentNoteIndex = 0;
+        let isPlaying = false;
+        let playbackInterval;
 
-        document.getElementById('startSong').addEventListener('click', () => {
+        document.getElementById('startHighlight').addEventListener('click', () => {
             const selectedSong = document.getElementById('songSelector').value;
             
             if (selectedSong === 'happyBirthday') {
@@ -266,7 +290,7 @@
                 const keyToHighlight = document.querySelector(`.key[data-note="${nextNote}"]`);
                 keyToHighlight.classList.add('highlight');
             } else {
-                alert('Song completed!');
+                alert('👏👏👏👏👏👏👏👏');
             }
         }
 
@@ -276,6 +300,57 @@
                 if (playedNote === expectedNote) {
                     currentNoteIndex++;
                     highlightNextNote();
+                }
+            }
+        }
+
+        // Playback controls
+        const playButton = document.getElementById('playButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const stopButton = document.getElementById('stopButton');
+
+        playButton.addEventListener('click', () => {
+            if (!isPlaying) {
+                isPlaying = true;
+                playSong();
+            }
+        });
+
+        pauseButton.addEventListener('click', () => {
+            isPlaying = false;
+            clearTimeout(playbackInterval);
+        });
+
+        stopButton.addEventListener('click', () => {
+            isPlaying = false;
+            clearTimeout(playbackInterval);
+            currentNoteIndex = 0;
+            keys.forEach(key => key.classList.remove('active', 'highlight'));
+        });
+
+        async function playSong() {
+            const selectedSong = document.getElementById('songSelector').value;
+            
+            if (selectedSong === 'happyBirthday') {
+                currentSongNotes = happyBirthday;
+            }
+
+            while (isPlaying && currentNoteIndex < currentSongNotes.length) {
+                const note = currentSongNotes[currentNoteIndex];
+                const key = document.querySelector(`.key[data-note="${note.note}"]`);
+                key.classList.add('active', 'highlight');
+                await playNote(noteFrequencies[note.note], note.duration);
+                key.classList.remove('active', 'highlight');
+                currentNoteIndex++;
+
+                if (currentNoteIndex === currentSongNotes.length) {
+                    isPlaying = false;
+                    currentNoteIndex = 0;
+                }
+
+                if (isPlaying) {
+                    playbackInterval = setTimeout(() => {}, 100);
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 }
             }
         }
