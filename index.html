@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Octave Piano with Enharmonic Equivalence</title>
+    <title>One Octave Piano with Enharmonic Equivalence and Note Highlighting</title>
     <style>
         body {
             display: flex;
@@ -46,6 +46,12 @@
         .key.black:active, .key.black.active {
             background-color: #333;
         }
+        .key.highlight {
+            background-color: #ff6b6b;
+        }
+        .key.black.highlight {
+            background-color: #c23616;
+        }
         .note-name {
             font-weight: bold;
             margin-bottom: 5px;
@@ -69,7 +75,7 @@
         <select id="songSelector">
             <option value="happyBirthday">Happy Birthday to You</option>
         </select>
-        <button id="playSong">Play</button>
+        <button id="startSong">Start</button>
     </div>
     <div class="piano">
         <div class="key" data-note="C">
@@ -172,6 +178,7 @@
                 const note = key.getAttribute('data-note');
                 playNote(noteFrequencies[note]);
                 key.classList.add('active');
+                checkPlayedNote(note);
             });
 
             key.addEventListener('mouseup', () => {
@@ -196,6 +203,7 @@
                 playNote(noteFrequencies[note]);
                 const key = document.querySelector(`.key[data-note="${note}"]`);
                 key.classList.add('active');
+                checkPlayedNote(note);
             }
         });
 
@@ -235,34 +243,41 @@
             { note: 'F', duration: 1 }
         ];
 
-        document.getElementById('playSong').addEventListener('click', () => {
+        let currentSongNotes = [];
+        let currentNoteIndex = 0;
+
+        document.getElementById('startSong').addEventListener('click', () => {
             const selectedSong = document.getElementById('songSelector').value;
-            let songNotes = [];
             
             if (selectedSong === 'happyBirthday') {
-                songNotes = happyBirthday;
+                currentSongNotes = happyBirthday;
             }
 
-            playSong(songNotes);
+            currentNoteIndex = 0;
+            highlightNextNote();
         });
 
-        function playSong(songNotes) {
-            let delay = 0;
-            songNotes.forEach(note => {
-                setTimeout(() => {
-                    playNoteWithKey(note.note);
-                }, delay);
-                delay += note.duration * 500; // 1 duration unit = 500ms
-            });
+        function highlightNextNote() {
+            // Remove highlight from all keys
+            keys.forEach(key => key.classList.remove('highlight'));
+
+            if (currentNoteIndex < currentSongNotes.length) {
+                const nextNote = currentSongNotes[currentNoteIndex].note;
+                const keyToHighlight = document.querySelector(`.key[data-note="${nextNote}"]`);
+                keyToHighlight.classList.add('highlight');
+            } else {
+                alert('Song completed!');
+            }
         }
 
-        function playNoteWithKey(note) {
-            playNote(noteFrequencies[note]);
-            const key = document.querySelector(`.key[data-note="${note}"]`);
-            key.classList.add('active');
-            setTimeout(() => {
-                key.classList.remove('active');
-            }, 500); // 音符の長さに応じて調整
+        function checkPlayedNote(playedNote) {
+            if (currentNoteIndex < currentSongNotes.length) {
+                const expectedNote = currentSongNotes[currentNoteIndex].note;
+                if (playedNote === expectedNote) {
+                    currentNoteIndex++;
+                    highlightNextNote();
+                }
+            }
         }
     </script>
 </body>
