@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Octave Piano with Enharmonic Equivalence</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .piano {
+            display: flex;
+            position: relative;
+        }
+        .key {
+            width: 60px;
+            height: 200px;
+            background-color: white;
+            border: 1px solid black;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .key.black {
+            position: absolute;
+            width: 40px;
+            height: 120px;
+            background-color: black;
+            z-index: 1;
+            color: white;
+        }
+        .key:active, .key.active {
+            background-color: #ddd;
+        }
+        .key.black:active, .key.black.active {
+            background-color: #333;
+        }
+        .note-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .key-mapping {
+            font-size: 0.8em;
+        }
+        .enharmonic {
+            font-size: 0.7em;
+            margin-bottom: 3px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label for="songSelector">Select a song:</label>
+        <select id="songSelector">
+            <option value="happyBirthday">Happy Birthday to You</option>
+        </select>
+        <button id="playSong">Play</button>
+    </div>
+    <div class="piano">
+        <div class="key" data-note="C">
+            <span class="note-name">C</span>
+            <span class="key-mapping">A</span>
+        </div>
+        <div class="key black" data-note="C#" style="left: 40px;">
+            <span class="note-name">C♯</span>
+            <span class="enharmonic">D♭</span>
+            <span class="key-mapping">W</span>
+        </div>
+        <div class="key" data-note="D">
+            <span class="note-name">D</span>
+            <span class="key-mapping">S</span>
+        </div>
+        <div class="key black" data-note="D#" style="left: 100px;">
+            <span class="note-name">D♯</span>
+            <span class="enharmonic">E♭</span>
+            <span class="key-mapping">E</span>
+        </div>
+        <div class="key" data-note="E">
+            <span class="note-name">E</span>
+            <span class="key-mapping">D</span>
+        </div>
+        <div class="key" data-note="F">
+            <span class="note-name">F</span>
+            <span class="key-mapping">F</span>
+        </div>
+        <div class="key black" data-note="F#" style="left: 220px;">
+            <span class="note-name">F♯</span>
+            <span class="enharmonic">G♭</span>
+            <span class="key-mapping">T</span>
+        </div>
+        <div class="key" data-note="G">
+            <span class="note-name">G</span>
+            <span class="key-mapping">G</span>
+        </div>
+        <div class="key black" data-note="G#" style="left: 280px;">
+            <span class="note-name">G♯</span>
+            <span class="enharmonic">A♭</span>
+            <span class="key-mapping">Y</span>
+        </div>
+        <div class="key" data-note="A">
+            <span class="note-name">A</span>
+            <span class="key-mapping">H</span>
+        </div>
+        <div class="key black" data-note="Bb" style="left: 340px;">
+            <span class="note-name">A♯</span>
+            <span class="enharmonic">B♭</span>
+            <span class="key-mapping">U</span>
+        </div>
+        <div class="key" data-note="B">
+            <span class="note-name">B</span>
+            <span class="key-mapping">J</span>
+        </div>
+        <div class="key" data-note="C2">
+            <span class="note-name">C</span>
+            <span class="key-mapping">K</span>
+        </div>
+    </div>
+
+    <script>
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playNote(frequency) {
+            const oscillator = audioContext.createOscillator();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+
+            const gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        const noteFrequencies = {
+            'C': 261.63,
+            'C#': 277.18,
+            'D': 293.66,
+            'D#': 311.13,
+            'E': 329.63,
+            'F': 349.23,
+            'F#': 369.99,
+            'G': 392.00,
+            'G#': 415.30,
+            'A': 440.00,
+            'Bb': 466.16,
+            'B': 493.88,
+            'C2': 523.25
+        };
+
+        const keys = document.querySelectorAll('.key');
+        keys.forEach(key => {
+            key.addEventListener('mousedown', () => {
+                const note = key.getAttribute('data-note');
+                playNote(noteFrequencies[note]);
+                key.classList.add('active');
+            });
+
+            key.addEventListener('mouseup', () => {
+                key.classList.remove('active');
+            });
+
+            key.addEventListener('mouseleave', () => {
+                key.classList.remove('active');
+            });
+        });
+
+        // Keyboard controls
+        const keyboardMap = {
+            'a': 'C', 'w': 'C#', 's': 'D', 'e': 'D#', 'd': 'E', 'f': 'F',
+            't': 'F#', 'g': 'G', 'y': 'G#', 'h': 'A', 'u': 'Bb', 'j': 'B', 'k': 'C2'
+        };
+
+        document.addEventListener('keydown', (event) => {
+            if (event.repeat) return;
+            const note = keyboardMap[event.key.toLowerCase()];
+            if (note) {
+                playNote(noteFrequencies[note]);
+                const key = document.querySelector(`.key[data-note="${note}"]`);
+                key.classList.add('active');
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            const note = keyboardMap[event.key.toLowerCase()];
+            if (note) {
+                const key = document.querySelector(`.key[data-note="${note}"]`);
+                key.classList.remove('active');
+            }
+        });
+
+        const happyBirthday = [
+            { note: 'C', duration: 1 },
+            { note: 'C', duration: 1 },
+            { note: 'D', duration: 1 },
+            { note: 'C', duration: 1 },
+            { note: 'F', duration: 1 },
+            { note: 'E', duration: 1 },
+            { note: 'C', duration: 1 },
+            { note: 'C', duration: 1 },
+            { note: 'D', duration: 1 },
+            { note: 'C', duration: 1 },
+            { note: 'G', duration: 1 },
+            { note: 'F', duration: 1 },
+            { note: 'C', duration: 1 },
+            { note: 'C', duration: 1 },
+            { note: 'C2', duration: 1 },
+            { note: 'A', duration: 1 },
+            { note: 'F', duration: 1 },
+            { note: 'E', duration: 1 },
+            { note: 'D', duration: 1 },
+            { note: 'Bb', duration: 1 },
+            { note: 'Bb', duration: 1 },
+            { note: 'A', duration: 1 },
+            { note: 'F', duration: 1 },
+            { note: 'G', duration: 1 },
+            { note: 'F', duration: 1 }
+        ];
+
+        document.getElementById('playSong').addEventListener('click', () => {
+            const selectedSong = document.getElementById('songSelector').value;
+            let songNotes = [];
+            
+            if (selectedSong === 'happyBirthday') {
+                songNotes = happyBirthday;
+            }
+
+            playSong(songNotes);
+        });
+
+        function playSong(songNotes) {
+            let delay = 0;
+            songNotes.forEach(note => {
+                setTimeout(() => {
+                    playNoteWithKey(note.note);
+                }, delay);
+                delay += note.duration * 500; // 1 duration unit = 500ms
+            });
+        }
+
+        function playNoteWithKey(note) {
+            playNote(noteFrequencies[note]);
+            const key = document.querySelector(`.key[data-note="${note}"]`);
+            key.classList.add('active');
+            setTimeout(() => {
+                key.classList.remove('active');
+            }, 500); // 音符の長さに応じて調整
+        }
+    </script>
+</body>
+</html>
