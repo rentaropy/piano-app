@@ -3,256 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>piano-app</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-        .sheet-music {
-            margin-bottom: 20px;
-            max-width: 100%;
-            height: 360px;
-        }
-        .piano {
-            display: flex;
-            position: relative;
-        }
-        .key {
-            width: 60px;
-            height: 200px;
-            background-color: white;
-            border: 1px solid black;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column-reverse; /* Reverse column order to place note name below */
-            justify-content: flex-end;
-            align-items: center;
-            padding-bottom: 10px;
-            box-sizing: border-box;
-            position: relative;
-        }
-        .key.black {
-            position: absolute;
-            width: 40px;
-            height: 120px;
-            background-color: black;
-            z-index: 1;
-            color: white;
-        }
-        .key:active, .key.active {
-            background-color: #ddd;
-        }
-        .key.black:active, .key.black.active {
-            background-color: #333;
-        }
-        .key.highlight {
-            background-color: #ff6b6b;
-        }
-        .key.black.highlight {
-            background-color: #c23616;
-        }
-        .note-name {
-            font-size: 1em;
-            margin-top: 10px; /* Adjust spacing as needed */
-            position: absolute;
-            bottom: -36px; /* Adjust as needed to move the note names outside and below the keys */
-            width: 100%; /* Ensure the note name spans the width of the key */
-            text-align: center; /* Center the note name */
-        }
-        .dot {
-            width: 16px;
-            height: 16px;
-            background-color: red;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 16px; /* Position the dot 10px from the top */
-            display: none; /* Hide dots by default */
-        }
-
-        .key[data-note="C4"] .dot,
-        .key[data-note="D4"] .dot,
-        .key[data-note="E4"] .dot,
-        .key[data-note="G4"] .dot,
-        .key[data-note="A4"] .dot,
-        .key[data-note="C5"] .dot
-        {
-            display: block; /* Show dots on specific keys */
-        }
-    </style>
+    <title>Piano App</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <img src="momotaro.png" alt="Sheet Music" class="sheet-music">
-    <div class="controls">
-        <label for="songSelector">曲を選ぶ:</label>
-        <select id="songSelector">
-            <option value="momotaro">桃太郎</option>
-        </select>
-        <button id="startHighlight">演奏する</button>
+    <div class="container">
+        <div class="controls">
+            <select id="song-select" class="modern-select">
+                <option value="happy-birthday">Happy Birthday</option>
+            </select>
+            <button id="auto-play" class="modern-button">Auto Play</button>
+            <button id="assisted-play" class="modern-button">Assisted Performance</button>
+        </div>
+        <div class="piano-container">
+            <div class="piano">
+                <div class="key white" data-note="C"><div class="red-dot"></div></div>
+                <div class="key black" data-note="C#"></div>
+                <div class="key white" data-note="D"><div class="red-dot"></div></div>
+                <div class="key black" data-note="D#"></div>
+                <div class="key white" data-note="E"><div class="red-dot"></div></div>
+                <div class="key white" data-note="F"></div>
+                <div class="key black" data-note="F#"></div>
+                <div class="key white" data-note="G"><div class="red-dot"></div></div>
+                <div class="key black" data-note="G#"></div>
+                <div class="key white" data-note="A"><div class="red-dot"></div></div>
+                <div class="key black" data-note="A#"></div>
+                <div class="key white" data-note="B"></div>
+                <div class="key white" data-note="C2"><div class="red-dot"></div></div>
+            </div>
+            <div class="note-names">
+                <span>ド</span><span>レ</span><span>ミ</span><span>ファ</span>
+                <span>ソ</span><span>ラ</span><span>シ</span><span>ド</span>
+            </div>
+        </div>
+        <div id="message"></div>
     </div>
-    <div class="piano">
-    <!-- First Octave -->
-    <div class="key" data-note="C4">
-        <span class="dot"></span>
-        <span class="note-name">ド</span>
-    </div>
-    <div class="key black" data-note="C#4" style="left: 40px;">
-        <span class="dot"></span>
-    </div>
-    <div class="key" data-note="D4">
-        <span class="dot"></span>
-        <span class="note-name">レ</span>
-    </div>
-    <div class="key black" data-note="D#4" style="left: 100px;">
-        <span class="dot"></span>
-    </div>
-    <div class="key" data-note="E4">
-        <span class="dot"></span>
-        <span class="note-name">ミ</span>
-    </div>
-    <div class="key" data-note="F4">
-        <span class="dot"></span>
-        <span class="note-name">ファ</span>
-    </div>
-    <div class="key black" data-note="F#4" style="left: 220px;">
-        <span class="dot"></span>
-    </div>
-    <div class="key" data-note="G4">
-        <span class="dot"></span>
-        <span class="note-name">ソ</span>
-    </div>
-    <div class="key black" data-note="G#4" style="left: 280px;">
-        <span class="dot"></span>
-    </div>
-    <div class="key" data-note="A4">
-        <span class="dot"></span>
-        <span class="note-name">ラ</span>
-    </div>
-    <div class="key black" data-note="Bb4" style="left: 340px;">
-        <span class="dot"></span>
-    </div>
-    <div class="key" data-note="B4">
-        <span class="dot"></span>
-        <span class="note-name">シ</span>
-    </div>
-    <!-- Second Octave -->
-    <div class="key" data-note="C5">
-        <span class="dot"></span>
-        <span class="note-name">ド</span>
-    </div>
-</div>
-
-    <script>
-        // JavaScript code remains unchanged
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playNote(frequency) {
-            const oscillator = audioContext.createOscillator();
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-
-            const gainNode = audioContext.createGain();
-            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.5);
-        }
-
-        const noteFrequencies = {
-            'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23,
-            'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'Bb4': 466.16, 'B4': 493.88,
-            'C5': 523.25
-        };
-
-        const keys = document.querySelectorAll('.key');
-        keys.forEach(key => {
-            key.addEventListener('mousedown', () => {
-                const note = key.getAttribute('data-note');
-                playNote(noteFrequencies[note]);
-                key.classList.add('active');
-                checkPlayedNote(note);
-            });
-
-            key.addEventListener('mouseup', () => {
-                key.classList.remove('active');
-            });
-
-            key.addEventListener('mouseleave', () => {
-                key.classList.remove('active');
-            });
-        });
-
-        const momotaro = [
-            { note: 'G4', duration: 1.5 },
-            { note: 'A4', duration: 0.5 },
-            { note: 'G4', duration: 0.5 },
-            { note: 'G4', duration: 0.5 },
-            { note: 'E4', duration: 1 },
-            { note: 'G4', duration: 0.5 },
-            { note: 'G4', duration: 0.5 },
-            { note: 'E4', duration: 0.5 },
-            { note: 'C4', duration: 0.5 },
-            { note: 'D4', duration: 2 },
-            { note: 'C4', duration: 0.5 },
-            { note: 'C4', duration: 0.5 },
-            { note: 'D4', duration: 0.5 },
-            { note: 'D4', duration: 0.5 },
-            { note: 'E4', duration: 0.5 },
-            { note: 'E4', duration: 0.5 },
-            { note: 'D4', duration: 1 },
-            { note: 'E4', duration: 0.5 },
-            { note: 'E4', duration: 0.5 },
-            { note: 'A4', duration: 0.5 },
-            { note: 'A4', duration: 0.5 },
-            { note: 'G4', duration: 2 }
-        ];
-
-        let currentSongNotes = [];
-        let currentNoteIndex = 0;
-
-        document.getElementById('startHighlight').addEventListener('click', () => {
-            const selectedSong = document.getElementById('songSelector').value;
-            
-            if (selectedSong === 'momotaro') {
-                currentSongNotes = momotaro;
-            }
-
-            currentNoteIndex = 0;
-            highlightNextNote();
-        });
-
-        function highlightNextNote() {
-            // Remove highlight from all keys
-            keys.forEach(key => key.classList.remove('highlight'));
-
-            if (currentNoteIndex < currentSongNotes.length) {
-                const nextNote = currentSongNotes[currentNoteIndex].note;
-                const keyToHighlight = document.querySelector(`.key[data-note="${nextNote}"]`);
-                keyToHighlight.classList.add('highlight');
-            } else {
-                ;
-            }
-        }
-
-        function checkPlayedNote(playedNote) {
-            if (currentNoteIndex < currentSongNotes.length) {
-                const expectedNote = currentSongNotes[currentNoteIndex].note;
-                if (playedNote === expectedNote) {
-                    currentNoteIndex++;
-                    highlightNextNote();
-                }
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
