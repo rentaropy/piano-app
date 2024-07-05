@@ -1,0 +1,241 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.app-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.app-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #34495e;
+}
+
+.image-container {
+    margin-bottom: 20px;
+}
+
+.momotaro-image {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.controls {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.modern-select, .modern-button {
+    margin: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.modern-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position-x: 95%;
+    background-position-y: 50%;
+    padding-right: 30px;
+}
+
+.modern-button:hover, .modern-select:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.modern-button:active {
+    transform: translateY(0);
+}
+
+.modern-button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.piano-container {
+    background-color: #2c3e50;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.piano {
+    display: flex;
+    position: relative;
+}
+
+.key {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.white {
+    width: 70px;
+    height: 240px;
+    background-color: white;
+    border: 1px solid #bdc3c7;
+    border-radius: 0 0 5px 5px;
+    z-index: 1;
+}
+
+.black {
+    width: 46px;
+    height: 150px;
+    background-color: #2c3e50;
+    margin-left: -23px;
+    margin-right: -23px;
+    z-index: 2;
+}
+
+.white:active, .white.active {
+    background-color: #ecf0f1;
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.black:active, .black.active {
+    background-color: #34495e;
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+.note-names {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.note-names span {
+    width: 70px;
+    text-align: center;
+    font-size: 14px;
+    color: #ecf0f1;
+}
+
+.red-dot {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background-color: #e74c3c;
+    border-radius: 50%;
+}
+.key.highlight {
+    background-color: #f39c12;
+}
+
+.black.highlight {
+    background-color: #d35400;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .app-title {
+        font-size: 2rem;
+    }
+
+    .app-subtitle {
+        font-size: 1rem;
+    }
+
+    .white {
+        width: 50px;
+        height: 180px;
+    }
+    
+    .black {
+        width: 36px;
+        height: 110px;
+        margin-left: -18px;
+        margin-right: -18px;
+    }
+    
+    .note-names span {
+        width: 50px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-title {
+        font-size: 1.5rem;
+    }
+
+    .app-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .white {
+        width: 40px;
+        height: 150px;
+    }
+    
+    .black {
+        width: 26px;
+        height: 90px;
+        margin-left: -13px;
+        margin-right: -13px;
+    }
+    
+    .note-names span {
+        width: 40px;
+        font-size: 10px;
+    }
+}

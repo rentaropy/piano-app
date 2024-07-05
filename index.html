@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ピアノアプリ - ヨナ抜き音階</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1 class="app-title">ヨナ抜き音階</h1>
+            <h2 class="app-subtitle">ヨナ抜き音階の曲「桃太郎」</h2>
+            <div class="image-container">
+                <img src="momotaro.png" alt="桃太郎" class="momotaro-image">
+            </div>
+        </header>
+        <div class="controls">
+            <select id="song-select" class="modern-select">
+                <option value="momotaro">桃太郎</option>
+            </select>
+            <button id="auto-play" class="modern-button">自動演奏</button>
+            <button id="assisted-play" class="modern-button">アシスト演奏</button>
+        </div>
+        <div class="piano-container">
+            <div class="piano">
+                <div class="key white" data-note="C"><div class="red-dot"></div></div>
+                <div class="key black" data-note="C#"></div>
+                <div class="key white" data-note="D"><div class="red-dot"></div></div>
+                <div class="key black" data-note="D#"></div>
+                <div class="key white" data-note="E"><div class="red-dot"></div></div>
+                <div class="key white" data-note="F"></div>
+                <div class="key black" data-note="F#"></div>
+                <div class="key white" data-note="G"><div class="red-dot"></div></div>
+                <div class="key black" data-note="G#"></div>
+                <div class="key white" data-note="A"><div class="red-dot"></div></div>
+                <div class="key black" data-note="A#"></div>
+                <div class="key white" data-note="B"></div>
+                <div class="key white" data-note="C2"><div class="red-dot"></div></div>
+            </div>
+            <div class="note-names">
+                <span>ド</span><span>レ</span><span>ミ</span><span>ファ</span>
+                <span>ソ</span><span>ラ</span><span>シ</span><span>ド</span>
+            </div>
+        </div>
+        <div id="message"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
