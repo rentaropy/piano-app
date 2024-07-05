@@ -1,19 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piano App</title>
+    <title>ピアノアプリ - ヨナ抜き音階</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
+        <header class="app-header">
+            <h1 class="app-title">ヨナ抜き音階</h1>
+            <h2 class="app-subtitle">ヨナ抜き音階の曲「桃太郎」</h2>
+            <div class="image-container">
+                <img src="momotaro.png" alt="桃太郎" class="momotaro-image">
+            </div>
+        </header>
         <div class="controls">
             <select id="song-select" class="modern-select">
-                <option value="happy-birthday">Happy Birthday</option>
+                <option value="momotaro">桃太郎</option>
             </select>
-            <button id="auto-play" class="modern-button">Auto Play</button>
-            <button id="assisted-play" class="modern-button">Assisted Performance</button>
+            <button id="auto-play" class="modern-button">自動演奏</button>
+            <button id="assisted-play" class="modern-button">アシスト演奏</button>
         </div>
         <div class="piano-container">
             <div class="piano">

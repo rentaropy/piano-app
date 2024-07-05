@@ -8,49 +8,44 @@ const noteFrequencies = {
 };
 
 const adsr = {
-    attack: 0.05,
+    attack: 0.02,
     decay: 0.1,
     sustain: 0.7,
-    release: 0.1
+    release: 0.06
 };
 
-const defaultVolume = 0.7;
+const defaultVolume = 0.5;
 
-// Happy Birthday song notes (starting from C)
+// Momotaro song notes (starting from C)
 const bpm = 120; // Beats per minute
 const beatDuration = 60 / bpm; // Duration of one beat in seconds
 
-// Happy Birthday song notes (starting from C) with rests
-const happyBirthdaySong = [
-    { note: 'C', duration: 0.75 * beatDuration },
-    { note: 'C', duration: 0.25 * beatDuration },
-    { note: 'D', duration: 1 * beatDuration },
-    { note: 'C', duration: 1 * beatDuration },
-    { note: 'F', duration: 1 * beatDuration },
+// Momotaro song notes (starting from C) with rests
+const momotaroSong = [
+    { note: 'G', duration: 1.5 * beatDuration },
+    { note: 'A', duration: 0.5 * beatDuration },
+    { note: 'G', duration: 0.5 * beatDuration },
+    { note: 'G', duration: 0.5 * beatDuration },
     { note: 'E', duration: 1 * beatDuration },
-    { note: 'rest', duration: 1 * beatDuration },
-    { note: 'C', duration: 0.75 * beatDuration },
-    { note: 'C', duration: 0.25 * beatDuration },
+    { note: 'G', duration: 0.5 * beatDuration },
+    { note: 'G', duration: 0.5 * beatDuration },
+    { note: 'E', duration: 0.5 * beatDuration },
+    { note: 'C', duration: 0.5 * beatDuration },
+    { note: 'D', duration: 1.5 * beatDuration },
+    { note: 'rest', duration: 0.5 * beatDuration },
+    { note: 'C', duration: 0.5 * beatDuration },
+    { note: 'C', duration: 0.5 * beatDuration },
+    { note: 'D', duration: 0.5 * beatDuration },
+    { note: 'D', duration: 0.5 * beatDuration },
+    { note: 'E', duration: 0.5 * beatDuration },
+    { note: 'E', duration: 0.5 * beatDuration },
     { note: 'D', duration: 1 * beatDuration },
-    { note: 'C', duration: 1 * beatDuration },
-    { note: 'G', duration: 1 * beatDuration },
-    { note: 'F', duration: 1 * beatDuration },
-    { note: 'rest', duration: 1 * beatDuration },
-    { note: 'C', duration: 0.75 * beatDuration },
-    { note: 'C', duration: 0.25 * beatDuration },
-    { note: 'C2', duration: 1 * beatDuration },
-    { note: 'A', duration: 1 * beatDuration },
-    { note: 'F', duration: 1 * beatDuration },
-    { note: 'E', duration: 1 * beatDuration },
-    { note: 'D', duration: 1 * beatDuration },
-    { note: 'rest', duration: 1 * beatDuration },
-    { note: 'A#', duration: 0.75 * beatDuration },
-    { note: 'A#', duration: 0.25 * beatDuration },
-    { note: 'A', duration: 1 * beatDuration },
-    { note: 'F', duration: 1 * beatDuration },
-    { note: 'G', duration: 1 * beatDuration },
-    { note: 'F', duration: 1 * beatDuration },
-    { note: 'rest', duration: 1 * beatDuration },
+    { note: 'E', duration: 0.5 * beatDuration },
+    { note: 'E', duration: 0.5 * beatDuration },
+    { note: 'A', duration: 0.5 * beatDuration },
+    { note: 'A', duration: 0.5 * beatDuration },
+    { note: 'G', duration: 1.5 * beatDuration },
+    { note: 'rest', duration: 0.5 * beatDuration }
 ];
 
 function initAudioContext() {
@@ -244,7 +239,8 @@ async function assistedPlaySong(song) {
             const { note, duration } = song[currentIndex];
             const key = document.querySelector(`.key[data-note="${note}"]`);
             
-            if (event.target === key) {
+            // Check if the clicked element is the key or its child (red dot)
+            if (event.target === key || key.contains(event.target)) {
                 playNote(note, duration);
                 key.classList.remove('highlight');
                 currentIndex++;
@@ -262,21 +258,21 @@ async function assistedPlaySong(song) {
     };
 
     document.addEventListener('mousedown', handleKeyPress);
-    document.addEventListener('touchstart', handleKeyPress);
+    document.addEventListener('touchstart', handleKeyPress, { passive: false });
 
     highlightNextKey();
 }
 
 document.getElementById('auto-play').addEventListener('click', () => {
     const selectedSong = document.getElementById('song-select').value;
-    if (selectedSong === 'happy-birthday') {
-        autoPlaySong(happyBirthdaySong);
+    if (selectedSong === 'momotaro') {
+        autoPlaySong(momotaroSong);
     }
 });
 
 document.getElementById('assisted-play').addEventListener('click', () => {
     const selectedSong = document.getElementById('song-select').value;
-    if (selectedSong === 'happy-birthday') {
-        assistedPlaySong(happyBirthdaySong);
+    if (selectedSong === 'momotaro') {
+        assistedPlaySong(momotaroSong);
     }
 });
